@@ -103,11 +103,11 @@ export class RenderManager {
 
     this.settings = {
       useOrthographic: false,
-      fieldOfView: this.screen.degreesToRadians(100),
+      fieldOfView: 2 * Math.atan(1000 / (2 * 300)),
       zoom: 1,
       orthographicHeight: 1000,
       orthographicTranslation: new Float32Array([0, 0, 0]),
-      translation: new Float32Array([0, 0, -600]),
+      translation: new Float32Array([0, 0, 0]),
       scale: new Float32Array([1, 1, 1]),
       rotation: this.screen.degreesToRadians(0),
     };
@@ -288,8 +288,28 @@ export class RenderManager {
     });
   }
 
+  #applyPerspectiveProjection(aspect: number) {
+    this.transformMatrix
+      .perspective(this.settings.fieldOfView, aspect, 1, 2000)
+      .translate(this.settings.translation)
+      .rotateZ(this.settings.rotation)
+      .scale(this.settings.scale);
+  }
+
+  #applyOrthographicProjection(aspect: number, near = -1, far = 1) {
+    const halfHeight = (this.settings.orthographicHeight * 0.5) / this.settings.zoom;
+    const halfWidth = halfHeight * aspect;
+    this.transformMatrix
+      .orthographic(-halfWidth, halfWidth, -halfHeight, halfHeight, near, far)
+      .translate(this.settings.translation)
+      .rotateZ(this.settings.rotation)
+      .scale(this.settings.scale);
+  }
+
   #computeViewProjectionMatrix() {
     const aspect = this.canvas.width / this.canvas.height;
+    const orthoNear = this.#camera ? 1 : -1;
+    const orthoFar = this.#camera ? 2000 : 1;
 
     if (this.#camera) {
       /**
@@ -303,30 +323,20 @@ export class RenderManager {
       /**
        * Apply the perspective projection to the view matrix.
        */
-      this.transformMatrix
-        .perspective(this.settings.fieldOfView, aspect, 1, 2000)
-        .multiply(this.#scratchMatrix);
+      if (this.settings.useOrthographic) {
+        this.#applyOrthographicProjection(aspect, orthoNear, orthoFar);
+      } else {
+        this.#applyPerspectiveProjection(aspect);
+      }
 
+      this.transformMatrix.multiply(this.#scratchMatrix);
       return;
     }
 
     if (this.settings.useOrthographic) {
-      const halfHeight = (this.settings.orthographicHeight * 0.5) / this.settings.zoom;
-      const halfWidth = halfHeight * aspect;
-      this.settings.orthographicTranslation[0] = this.settings.translation[0];
-      this.settings.orthographicTranslation[1] = this.settings.translation[1];
-      this.settings.orthographicTranslation[2] = 0;
-      this.transformMatrix
-        .orthographic(-halfWidth, halfWidth, -halfHeight, halfHeight, -1, 1)
-        .translate(this.settings.orthographicTranslation)
-        .rotateZ(this.settings.rotation)
-        .scale(this.settings.scale);
+      this.#applyOrthographicProjection(aspect, orthoNear, orthoFar);
     } else {
-      this.transformMatrix
-        .perspective(this.settings.fieldOfView, aspect, 1, 2000)
-        .translate(this.settings.translation)
-        .rotateZ(this.settings.rotation)
-        .scale(this.settings.scale);
+      this.#applyPerspectiveProjection(aspect);
     }
   }
 

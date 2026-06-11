@@ -79,8 +79,18 @@ export function useWebGpuEditor(canvasRef: Ref<HTMLCanvasElement | null>) {
   };
 
   const onWheel = (event: WheelEvent) => {
-    orbitCameraRef.value?.handleDolly(event);
-    renderManagerRef.value?.redraw();
+    const renderManager = renderManagerRef.value;
+    const orbitCamera = orbitCameraRef.value;
+    if (!renderManager) return;
+
+    if (renderManager.settings.useOrthographic) {
+      const nextZoom = renderManager.settings.zoom + event.deltaY * 0.01;
+      renderManager.settings.zoom = Math.max(0.1, Math.min(10, nextZoom));
+    } else {
+      orbitCamera?.handleDolly(event);
+    }
+
+    renderManager.redraw();
   };
 
   return {
