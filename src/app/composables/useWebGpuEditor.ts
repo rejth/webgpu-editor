@@ -1,11 +1,5 @@
 import { onMounted, onUnmounted, type Ref, ref, shallowRef } from 'vue';
-import {
-  OrbitCamera,
-  RenderManager,
-  UNIT_RECT_INDICES,
-  UNIT_RECT_VERTICES,
-  Vector3D,
-} from '@/engine';
+import { OrbitCamera, RenderManager, UNIT_RECT_INDICES, UNIT_RECT_VERTICES, Vector3D } from '@/engine';
 import { buildDemoCard } from '@/scenes/demoCard.js';
 import { createRenderDebugGui } from './createRenderDebugGui.js';
 

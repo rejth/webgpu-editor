@@ -63,14 +63,7 @@ export class Matrix4 {
    * @param near - The near plane distance.
    * @param far - The far plane distance.
    */
-  orthographic(
-    left: number,
-    right: number,
-    bottom: number,
-    top: number,
-    near: number,
-    far: number,
-  ) {
+  orthographic(left: number, right: number, bottom: number, top: number, near: number, far: number) {
     const m = this.elements;
 
     m[0] = 2 / (right - left);

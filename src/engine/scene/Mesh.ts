@@ -31,12 +31,7 @@ export class Mesh {
    */
   gpuIndexBuffer: GPUBuffer | null = null;
 
-  constructor(
-    node: SceneGraphNode,
-    vertexData: Float32Array,
-    indexData: Uint16Array,
-    data: MeshData,
-  ) {
+  constructor(node: SceneGraphNode, vertexData: Float32Array, indexData: Uint16Array, data: MeshData) {
     this.node = node;
     this.vertexData = vertexData;
     this.indexData = indexData;

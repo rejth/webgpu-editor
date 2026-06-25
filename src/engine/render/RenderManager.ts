@@ -356,11 +356,7 @@ export class RenderManager {
 
     instanceInfo.matrixValue.set(this.#scratchMatrix.elements);
     instanceInfo.colorValue.set(mesh.data.color);
-    device.queue.writeBuffer(
-      instanceInfo.uniformBuffer,
-      0,
-      this.#toBufferSource(instanceInfo.uniformValues),
-    );
+    device.queue.writeBuffer(instanceInfo.uniformBuffer, 0, this.#toBufferSource(instanceInfo.uniformValues));
 
     if (!mesh.gpuVertexBuffer || !mesh.gpuIndexBuffer) {
       throw new Error(`GPU buffers not uploaded for ${mesh.node.id}.`);
@@ -446,13 +442,7 @@ export class RenderManager {
           vertices[i].z = vertexData[offset + 2];
         }
 
-        const result = this.#intersectLineSegmentAndTriangle(
-          near,
-          far,
-          vertices[0],
-          vertices[1],
-          vertices[2],
-        );
+        const result = this.#intersectLineSegmentAndTriangle(near, far, vertices[0], vertices[1], vertices[2]);
         if (result) {
           /**
            * Convert model space back to clip space so we can check Z to keep the closest hit.
@@ -580,12 +570,7 @@ export class RenderManager {
     return node;
   }
 
-  addRect(
-    id: string,
-    geometry: MeshGeometryData,
-    data: PerInstanceData,
-    parent: SceneGraphNode,
-  ): Mesh {
+  addRect(id: string, geometry: MeshGeometryData, data: PerInstanceData, parent: SceneGraphNode): Mesh {
     const { vertexData, indexData, source } = geometry;
     const node = this.addNode(id, source, parent);
     const mesh = new Mesh(node, vertexData, indexData, data);

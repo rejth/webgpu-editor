@@ -7,15 +7,8 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 
 useCanvasInputGuard();
 
-const {
-  setupError,
-  onPointerDown,
-  onPointerMove,
-  onPointerUp,
-  onPointerCancel,
-  onLostPointerCapture,
-  onWheel,
-} = useWebGpuEditor(canvasRef);
+const { setupError, onPointerDown, onPointerMove, onPointerUp, onPointerCancel, onLostPointerCapture, onWheel } =
+  useWebGpuEditor(canvasRef);
 </script>
 
 <template>

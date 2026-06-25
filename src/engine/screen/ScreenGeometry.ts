@@ -117,12 +117,7 @@ export class ScreenGeometry {
   }
 
   isPointInsideBoxDimension(p: Point, { x, y, width, height }: BoxDimension, padding = 0): boolean {
-    return (
-      p.x > x - padding &&
-      p.x < x + width + padding &&
-      p.y > y - padding &&
-      p.y < y + height + padding
-    );
+    return p.x > x - padding && p.x < x + width + padding && p.y > y - padding && p.y < y + height + padding;
   }
 
   getBoundingBox(bounds: BoxBounds = { x0: 0, y0: 0, x1: 0, y1: 0 }): BBox {
@@ -138,12 +133,7 @@ export class ScreenGeometry {
   areBoxesOverlapping(boxA: BoxBounds, boxB: BoxBounds): boolean {
     const box1 = this.getBoundingBox(boxA);
     const box2 = this.getBoundingBox(boxB);
-    return !(
-      box1.maxX < box2.minX ||
-      box1.minX > box2.maxX ||
-      box1.maxY < box2.minY ||
-      box1.minY > box2.maxY
-    );
+    return !(box1.maxX < box2.minX || box1.minX > box2.maxX || box1.maxY < box2.minY || box1.minY > box2.maxY);
   }
 
   areBoxesIntersecting(boxA: BoxDimension, boxB: BoxDimension): boolean {

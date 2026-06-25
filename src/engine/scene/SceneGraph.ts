@@ -120,11 +120,7 @@ export class NodeTransformation {
   rotation: Float32Array;
   scale: Float32Array;
 
-  constructor({
-    translation = [0, 0, 0],
-    rotation = [0, 0, 0],
-    scale = [1, 1, 1],
-  }: Transformations) {
+  constructor({ translation = [0, 0, 0], rotation = [0, 0, 0], scale = [1, 1, 1] }: Transformations) {
     this.translation = new Float32Array(translation);
     this.rotation = new Float32Array(rotation);
     this.scale = new Float32Array(scale);

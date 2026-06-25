@@ -74,9 +74,7 @@ export class Vector3D {
    * Returns the angle between this vector and another vector
    */
   angle(vector: Vector3D) {
-    return Math.acos(
-      Math.min(Math.max(this.dot(vector) / this.magnitude() / vector.magnitude(), -1), 1),
-    );
+    return Math.acos(Math.min(Math.max(this.dot(vector) / this.magnitude() / vector.magnitude(), -1), 1));
   }
 
   /**
@@ -164,9 +162,7 @@ export class Vector3D {
     t21: number,
     t22: number,
   ) {
-    return (
-      t00 * (t11 * t22 - t12 * t21) + t01 * (t12 * t20 - t10 * t22) + t02 * (t10 * t21 - t11 * t20)
-    );
+    return t00 * (t11 * t22 - t12 * t21) + t01 * (t12 * t20 - t10 * t22) + t02 * (t10 * t21 - t11 * t20);
   }
 
   /**
