@@ -1,6 +1,7 @@
 import { Matrix4 } from '../math/Matrix.js';
 import { Vector3D } from '../math/Vector3D.js';
-import { type NodeTransformation, SceneGraphNode } from '../scene/SceneGraph.js';
+import type { NodeTransformation } from '../scene/NodeTransformation.js';
+import { SceneGraphNode } from '../scene/SceneGraph.js';
 
 export class OrbitCamera {
   readonly canvas: HTMLCanvasElement;

@@ -2,73 +2,22 @@ import type { OrbitCamera } from '../camera/OrbitCamera.js';
 import { Matrix4 } from '../math/Matrix.js';
 import { Vector3D } from '../math/Vector3D.js';
 import { Mesh } from '../scene/Mesh.js';
-import { NodeTransformation, SceneGraphNode, type Transformations } from '../scene/SceneGraph.js';
+import { NodeTransformation, type Transformations } from '../scene/NodeTransformation.js';
+import { SceneGraphNode } from '../scene/SceneGraph.js';
 import type { Settings } from '../scene/types.js';
 import { ScreenGeometry } from '../screen/ScreenGeometry.js';
 import { resizeCanvasToDisplaySize } from '../utils/utils.js';
+import {
+  BYTES_PER_FLOAT,
+  COLOR_FLOATS,
+  FLOATS_PER_VERTEX,
+  MATRIX_FLOATS,
+  UNIFORM_BUFFER_SIZE,
+  VERTEX_BUFFER_LAYOUT,
+} from './constants.js';
 import fragmentShaderSource from './shaders/fragment.wgsl';
 import vertexShaderSource from './shaders/vertex.wgsl';
-
-const BYTES_PER_FLOAT = 4;
-const FLOATS_PER_VERTEX = 3; // x, y, z
-const COLOR_FLOATS = 4; // r, g, b, a
-const MATRIX_FLOATS = 16; // 4x4 matrix
-
-/**
- * The stride of the vertex buffer.
- * This is for a position-only vertex layout: 3 floats (x, y, z) 4 bytes each = 12 bytes per vertex
- */
-const VERTEX_STRIDE = FLOATS_PER_VERTEX * BYTES_PER_FLOAT;
-
-/**
- * The layout of the vertex buffer.
- * This is for a position-only vertex layout: 3 floats (x, y, z) 4 bytes each = 12 bytes per vertex
- */
-const VERTEX_BUFFER_LAYOUT: GPUVertexBufferLayout = {
-  arrayStride: VERTEX_STRIDE,
-  attributes: [
-    {
-      shaderLocation: 0,
-      offset: 0,
-      format: 'float32x3',
-    },
-  ],
-};
-
-/**
- * The size of the uniform buffer.
- * This is for a color and a matrix: 4 floats (r, g, b, a) 4 bytes each + 16 floats (4x4 matrix) 4 bytes each = 80 bytes
- */
-const UNIFORM_BUFFER_SIZE = (COLOR_FLOATS + MATRIX_FLOATS) * BYTES_PER_FLOAT;
-
-interface InstanceInfo {
-  uniformBuffer: GPUBuffer;
-  uniformValues: Float32Array;
-  matrixValue: Float32Array;
-  colorValue: Float32Array;
-  bindGroup: GPUBindGroup;
-}
-
-interface IntersectingMesh {
-  mesh: Mesh;
-  position: Vector3D;
-}
-
-type GPUInitialized = {
-  device: GPUDevice;
-  ctx: GPUCanvasContext;
-  presentationFormat: GPUTextureFormat;
-};
-
-interface MeshGeometryData {
-  vertexData: Float32Array;
-  indexData: Uint16Array;
-  source: Transformations;
-}
-
-interface PerInstanceData {
-  color: Float32Array;
-}
+import type { GPUInitialized, InstanceInfo, IntersectingMesh, MeshGeometryData, PerInstanceData } from './types.js';
 
 export class RenderManager {
   readonly canvas: HTMLCanvasElement;
@@ -186,8 +135,7 @@ export class RenderManager {
   }
 
   /** Create the uniform buffer and bind group for a single geometry instance. */
-  // TODO: rename to createUniforms
-  #createInstanceInfo(): InstanceInfo {
+  #createUniforms(): InstanceInfo {
     const { device } = this.#assertGPU();
     const bindGroupLayout = this.#bindGroupLayout;
 
@@ -227,7 +175,7 @@ export class RenderManager {
 
   #getOrCreateInstanceInfo(index: number): InstanceInfo {
     while (this.#instanceInfos.length <= index) {
-      this.#instanceInfos.push(this.#createInstanceInfo());
+      this.#instanceInfos.push(this.#createUniforms());
     }
     return this.#instanceInfos[index];
   }
